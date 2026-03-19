@@ -1,9 +1,15 @@
 export function wixImageToDirectUrl(wixUrl) {
-    const match = wixUrl.match(/^wix:image:\/\/v1\/([^/]+)\//);
-    if (!match) return null;
+    let match = wixUrl.match(/^wix:image:\/\/v1\/([^/]+)\//);
+    if (match) {
+        return `https://static.wixstatic.com/media/${match[1]}`;
+    }
 
-    const mediaId = match[1];
-    return `https://static.wixstatic.com/media/${mediaId}`;
+    match = wixUrl.match(/^wix:vector:\/\/v1\/(.+)$/);
+    if (match) {
+        return `https://static.wixstatic.com/shapes/${match[1]}`;
+    }
+
+    return null;
 }
 
 /**
