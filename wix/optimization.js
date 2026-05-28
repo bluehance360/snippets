@@ -1,20 +1,26 @@
-import * as wixSiteWindow from '@wix/site-window';
+import { warmupData, rendering } from '@wix/site-window';
 
 export async function getWarmupData(key, promise) {
-    let value = wixSiteWindow.warmupData.get(key);
+    try {
+        let value = await warmupData.get(key);
 
-    if (!value) {
-        let rendering_env;
+        if (!value) {
+            let rendering_env;
 
-        [value, rendering_env] = await Promise.all([
-            promise,
-            wixSiteWindow.rendering.env()
-        ]);
+            [value, rendering_env] = await Promise.all([
+                promise,
+                rendering.env()
+            ]);
 
-        if (rendering_env == "backend") {
-            wixSiteWindow.warmupData.set(key, value);
+            if (rendering_env == "backend") {
+                warmupData.set(key, value);
+            }
         }
-    }
 
-    return value;
+        return value;
+    } catch (error) {
+        console.error('error in getWarmupData', error);
+
+        return promise;
+    }
 }
